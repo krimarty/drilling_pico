@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "rmw_microros.h": "c",
+        "joy.h": "c"
+    }
+}
