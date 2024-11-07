@@ -134,7 +134,7 @@ int main()
 
     while (true)
     {
-
+        printf("Zkouska gitu");
         rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100));
     }
     return 0;
