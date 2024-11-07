@@ -1,11 +1,10 @@
-#ifndef kriz_24687
-#define kriz_24687
+#ifndef kriz_linear
+#define kriz_linear
 
 #include <stdio.h>
 #include <stdint.h>
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
-
 
 struct linear{
     uint8_t command;

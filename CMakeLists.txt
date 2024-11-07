@@ -14,6 +14,7 @@ add_executable(pico_micro_ros_drill
     pico_uart_transport.c
     storage_driver.c
     linear_driver.c
+    motor_driver.c
 
 )
 target_link_libraries(pico_micro_ros_drill

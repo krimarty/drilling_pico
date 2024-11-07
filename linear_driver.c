@@ -3,16 +3,10 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
+#include "linear_driver.h"
 
 #define I2C_PORT i2c0
 #define LINEAR_ADDR 0x09
-
-struct linear{
-    uint8_t command;
-    uint8_t speed;
-    uint8_t states;
-    uint16_t height;
-};
 
 int linear_read(struct linear* linear)
 {

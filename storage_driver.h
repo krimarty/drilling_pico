@@ -1,5 +1,5 @@
-#ifndef kriz_246877
-#define kriz_246877
+#ifndef kriz_storage
+#define kriz_storage
 
 #include <stdio.h>
 #include <stdint.h>
@@ -18,7 +18,6 @@ struct storage{
     uint16_t samples[3];
     uint8_t raw;
 };
-
 
 int storage_read(struct storage* storage);
 int storage_write(struct storage* storage);

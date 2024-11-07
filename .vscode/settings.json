@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "rmw_microros.h": "c",
-        "joy.h": "c"
+        "joy.h": "c",
+        "motor_driver.h": "c"
     }
 }

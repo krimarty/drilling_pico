@@ -15,14 +15,13 @@
 #include "hardware/i2c.h"
 #include "storage_driver.h"
 #include "linear_driver.h"
+#include "motor_driver.h"
 #include "math.h"
 
 #define I2C_PORT i2c0
 
 const uint LED_PIN = 25;
 sensor_msgs__msg__Joy *msg_joy;
-
-
 
 rcl_publisher_t publisher;
 std_msgs__msg__Int16 weight;
@@ -132,33 +131,43 @@ int main()
 
     struct storage storage;
     struct linear linear;
+    struct motor motor;
 
     storage_init(&storage);
     linear_init(&linear);
+    motor_init(&motor);
 
     while (true)
     {
-        if (msg_joy->axes.data[1] == 0)
-        {
-            linear.command = 1; // stop linear
-        }
-        else if (msg_joy->axes.data[1] > 0)
-        {
-            linear.command = 2; // up linear
-        }
-        else
-        {
-            linear.command = 3; // down linear
-        }
-        linear.speed = (uint8_t)((1.0f - fabs(msg_joy->axes.data[1])) * 100.0f);
+        //CONTROLLING LINEAR
+        if (msg_joy->axes.data[1] == 0) { linear.command = 1; }     // stop linear
+        else if (msg_joy->axes.data[1] > 0) { linear.command = 2; } // up linear
+        else { linear.command = 3; }                                // down linear
+        linear.speed = (uint8_t)((1.0f - fabs(msg_joy->axes.data[1])) * 100.0f); //calculating speed
         linear_write(&linear);
 
+        //CONTROLLING STORAGE
+        uint8_t old_storage_command = storage.command;
         if (msg_joy->buttons.data[0] == 1) { storage.command = 31; }        //pos 1
         else if (msg_joy->buttons.data[1] == 1) {storage.command = 32;}     //pos 2
         else if (msg_joy->buttons.data[2] == 1) {storage.command = 33;}     //pos 3
         else if (msg_joy->buttons.data[3] == 1) {storage.command = 30;}     //pos 0
         else if (msg_joy->buttons.data[4] == 1) {storage.command = 20;}     //get weight
         else if (msg_joy->buttons.data[5] == 1) {storage.command = 40;}     //hold pos
+        if (old_storage_command != storage.command) { storage_write(&storage); }
+
+        //CONTROLLING MOTOR
+        if (msg_joy->axes.data[5] <= 1) 
+        { 
+            motor.direction = 0;
+            motor.torque =  (1 - msg_joy->axes.data[5]) / 2 * 2.55;
+        }
+        else if (msg_joy->axes.data[2] <= 1) 
+        { 
+            motor.direction = 1;
+            motor.torque =  (1 - msg_joy->axes.data[2]) / 2 * 2.55; 
+        }
+        motor_write(&motor);
 
         rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100));
     }
